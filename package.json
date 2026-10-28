@@ -1,0 +1,14 @@
+{
+  "name": "bro-gang",
+  "version": "0.1.0",
+  "description": "Bro Gang Package Manager",
+  "bin": { "bg": "cli.js", "bgcreate": "lib/create.js" },
+  "main": "cli.js",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "smol-toml": "^1.3.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}
