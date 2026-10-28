@@ -1,0 +1,16 @@
+bg — Bro Gang Package Manager
+
+Usage:
+  bg install <pkg>[@version]
+  bg uninstall <pkg>
+  bg list
+  bg upgrade [pkg]
+  bg search <query>
+  bg info <pkg>
+  bg repo add <name> <url>
+  bg repo update
+  bg doctor
+  bgcreate                    Interactive manifest generator
+
+Aliases: bg i / bg rm / bg ls / bg up
+Home:    %USERPROFILE%\.broGang  (override: BROGANG_HOME)
