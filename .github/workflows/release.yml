@@ -1,0 +1,28 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci || npm install
+      - run: npx pkg cli.js --targets node20-win-x64 --output dist/bg.exe
+      - run: npx pkg lib/create.js --targets node20-win-x64 --output dist/bgcreate.exe
+      - shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/ps | Out-Null
+          Copy-Item ps/*.ps1 dist/ps/ -Force
+          Copy-Item help.txt dist/ -Force
+          Compress-Archive -Path dist/* -DestinationPath bg-${{ github.ref_name }}-win-x64.zip
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: bg-${{ github.ref_name }}-win-x64.zip
