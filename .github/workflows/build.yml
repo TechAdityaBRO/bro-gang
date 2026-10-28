@@ -1,0 +1,44 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci || npm install
+
+      - name: Compile bg.exe with pkg
+        run: |
+          npx pkg cli.js --targets node20-win-x64 --output dist/bg.exe
+          npx pkg lib/create.js --targets node20-win-x64 --output dist/bgcreate.exe
+
+      - name: Bundle ps/ scripts next to exe
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/ps | Out-Null
+          Copy-Item ps/*.ps1 dist/ps/ -Force
+          Copy-Item help.txt dist/ -Force
+
+      - name: Smoke test
+        shell: pwsh
+        run: |
+          ./dist/bg.exe --version
+          ./dist/bg.exe --help | Select-Object -First 3
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bg-windows-x64
+          path: dist/
